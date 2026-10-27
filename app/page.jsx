@@ -29,7 +29,7 @@ export default function Page() {
   useEffect(() => {
     const im = new Image();
     im.onload = () => setLogoOk(true);
-    im.src = '/intuit-logo.svg';
+    im.src = '/intuit-logo.png';
   }, []);
   const chatRef = useRef(null);
 
@@ -103,7 +103,7 @@ export default function Page() {
       <div className="topbar">
         <div className="lockup">
           {logoOk ? (
-            <img src="/intuit-logo.svg" alt="Intuit" className="logo" onError={() => setLogoOk(false)} />
+            <img src="/intuit-logo.png" alt="Intuit" className="logo" onError={() => setLogoOk(false)} />
           ) : (
             <span className="logo-text">Intuit</span>
           )}

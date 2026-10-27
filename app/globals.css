@@ -93,7 +93,7 @@ h1 { max-width: 32ch; }
 .topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
 .lockup { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .logo { height: 22px; width: auto; display: block; }
-@media (prefers-color-scheme: dark) { .logo { filter: invert(1) grayscale(1) brightness(2); } }
+
 .logo-text { font-weight: 700; font-size: 18px; letter-spacing: -0.02em; }
 .divider { width: 1px; height: 18px; background: var(--border); }
 .product { font-size: 14px; font-weight: 500; color: var(--muted); }
