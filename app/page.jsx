@@ -24,6 +24,13 @@ export default function Page() {
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
   const [copyMsg, setCopyMsg] = useState('');
+  const [logoOk, setLogoOk] = useState(false);
+
+  useEffect(() => {
+    const im = new Image();
+    im.onload = () => setLogoOk(true);
+    im.src = '/intuit-logo.svg';
+  }, []);
   const chatRef = useRef(null);
 
   useEffect(() => {
@@ -93,8 +100,19 @@ export default function Page() {
 
   return (
     <main className="wrap">
+      <div className="topbar">
+        <div className="lockup">
+          {logoOk ? (
+            <img src="/intuit-logo.svg" alt="Intuit" className="logo" onError={() => setLogoOk(false)} />
+          ) : (
+            <span className="logo-text">Intuit</span>
+          )}
+          <span className="divider" aria-hidden="true" />
+          <span className="product">Tax Copilot</span>
+        </div>
+        <span className="tag">Concept</span>
+      </div>
       <header>
-        <div className="brand">Tax Copilot</div>
         <h1>Upload a document, ask questions, hand a clean summary to an expert</h1>
         <p className="lede">Add your tax documents, ask questions in plain language, and send an expert a summary so they don't start from scratch.</p>
       </header>
