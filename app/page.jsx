@@ -96,13 +96,14 @@ export default function Page() {
       <header>
         <div className="brand">Tax Copilot</div>
         <h1>Upload a document, ask questions, hand a clean summary to an expert</h1>
-        <p className="lede">Add your tax documents, ask questions in plain language, and send an expert a summary so they never start from scratch.</p>
+        <p className="lede">Add your tax documents, ask questions in plain language, and send an expert a summary so they don't start from scratch.</p>
       </header>
 
       <div className="grid">
         <div className="col">
           <section className="panel" aria-label="Documents">
-            <div className="row"><h2>Documents</h2><span className="label">{docs.length} uploaded</span></div>
+            <div className="row"><h2>Documents</h2>{docs.length > 0 && <span className="label">{docs.length} added</span>}</div>
+            {docs.length === 0 && <div className="empty">Add a document to get started. The copilot reads it and pulls out the numbers that matter.</div>}
             {docs.map((d) => {
               const doc = DOCS[d.key];
               return (
@@ -129,17 +130,23 @@ export default function Page() {
 
           <section className="panel sum" aria-label="Summary for an expert">
             <div className="row"><h2>Summary for your tax expert</h2></div>
-            <h3>Documents received</h3>
-            {docKeys.length ? <ul>{docKeys.map((k) => <li key={k}>{DOCS[k].name}</li>)}</ul> : <div className="none">None yet</div>}
-            <h3>Questions asked</h3>
-            {asked.length ? <ul>{asked.map((q) => <li key={q}>{q}</li>)}</ul> : <div className="none">None yet</div>}
-            <h3>Open items</h3>
-            {items.length ? <ul>{items.map((q) => <li key={q}>{q}</li>)}</ul> : <div className="none">None yet</div>}
-            <div className="row"><button onClick={copy}>Copy summary</button><span className="label">{copyMsg}</span></div>
+            {docKeys.length === 0 && asked.length === 0 ? (
+              <div className="none">This fills in as you add documents and ask questions, so an expert can pick up where you left off.</div>
+            ) : (
+              <>
+                <h3>Documents received</h3>
+                {docKeys.length ? <ul>{docKeys.map((k) => <li key={k}>{DOCS[k].name}</li>)}</ul> : <div className="none">None yet</div>}
+                <h3>Questions asked</h3>
+                {asked.length ? <ul>{asked.map((q) => <li key={q}>{q}</li>)}</ul> : <div className="none">None yet</div>}
+                <h3>Open items</h3>
+                {items.length ? <ul>{items.map((q) => <li key={q}>{q}</li>)}</ul> : <div className="none">None yet</div>}
+                <div className="row"><button onClick={copy}>Copy summary</button><span className="label">{copyMsg}</span></div>
+              </>
+            )}
           </section>
         </div>
 
-        <section className="panel" aria-label="Copilot">
+        <section className="panel copilot" aria-label="Copilot">
           <div className="row"><h2>Copilot</h2></div>
           <div className="chat" ref={chatRef} aria-live="polite">
             {messages.map((m, i) => (
@@ -152,7 +159,7 @@ export default function Page() {
               </div>
             ))}
           </div>
-          <div className="chips">
+          <div className="chips suggest">
             {SUGGESTED.map((q) => <button key={q} onClick={() => ask(q)} disabled={busy}>{q}</button>)}
           </div>
           <form className="ask" onSubmit={(e) => { e.preventDefault(); ask(input); }}>

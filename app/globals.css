@@ -65,3 +65,25 @@ footer { color: var(--muted); font-size: 12px; font-family: var(--mono); }
 @media (prefers-reduced-motion: reduce) { .caret { animation: none; } }
 .brand { font-weight: 600; font-size: 14px; letter-spacing: -0.01em; display: flex; align-items: center; gap: 8px; }
 .brand::before { content: ""; width: 14px; height: 14px; border-radius: 4px; background: var(--fg); }
+
+/* Layout and sizing pass */
+body { padding-block: 32px 48px; }
+.wrap { max-width: 1040px; gap: 28px; }
+header { display: flex; flex-direction: column; gap: 4px; }
+h1 { margin-top: 16px; font-size: clamp(24px, 3.2vw, 32px); max-width: 22ch; }
+.lede { margin-top: 6px; font-size: 15px; max-width: 56ch; }
+.grid { align-items: start; gap: 20px; }
+@media (min-width: 900px) { .grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); } }
+.col { gap: 20px; }
+.panel { padding: 20px; gap: 14px; }
+.panel h2 { font-size: 14px; }
+.empty { border: 1px dashed var(--border); border-radius: 8px; padding: 20px; color: var(--muted); font-size: 13px; text-align: center; }
+.none { line-height: 1.5; }
+.copilot { min-height: 420px; }
+@media (min-width: 900px) { .copilot { height: min(620px, calc(100vh - 210px)); } }
+.copilot .chat { flex: 1; min-height: 160px; max-height: none; }
+.suggest button { font-size: 12.5px; padding: 6px 10px; color: var(--muted); }
+.suggest button:hover:not(:disabled) { color: var(--fg); }
+.ask input { padding: 9px 12px; }
+.ask button { padding: 9px 16px; }
+h1 { max-width: 32ch; }
