@@ -63,3 +63,5 @@ button.primary { background: var(--accent-bg); color: var(--accent-fg); border-c
 .shows p { margin: 0; color: var(--muted); font-size: 13px; }
 footer { color: var(--muted); font-size: 12px; font-family: var(--mono); }
 @media (prefers-reduced-motion: reduce) { .caret { animation: none; } }
+.brand { font-weight: 600; font-size: 14px; letter-spacing: -0.01em; display: flex; align-items: center; gap: 8px; }
+.brand::before { content: ""; width: 14px; height: 14px; border-radius: 4px; background: var(--fg); }

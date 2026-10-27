@@ -3,9 +3,6 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
 import { DOCS, SUGGESTED } from '../lib/docs';
 
-const ENV = process.env.NEXT_PUBLIC_VERCEL_ENV || 'local';
-const ENV_LABEL = ENV === 'production' ? 'Production deployment' : ENV === 'preview' ? 'Preview deployment (review link)' : 'Local build';
-
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 function openItems(docKeys, asked) {
@@ -21,7 +18,7 @@ function openItems(docKeys, asked) {
 export default function Page() {
   const [docs, setDocs] = useState([]); // [{key, done:number}]
   const [messages, setMessages] = useState([
-    { role: 'ai', text: 'Upload a sample document, then ask me anything about it. Try one of the questions below or type your own.', mode: null },
+    { role: 'ai', text: 'Add a document, then ask me anything about your return. Pick a question below or type your own.', mode: null },
   ]);
   const [asked, setAsked] = useState([]);
   const [input, setInput] = useState('');
@@ -60,7 +57,7 @@ export default function Page() {
         body: JSON.stringify({ question: q, docs: readyDocs }),
       });
       const mode = res.headers.get('X-Answer-Mode') || 'simulated';
-      update({ mode, prog: readyDocs.length ? `Used ${readyDocs.length} document${readyDocs.length > 1 ? 's' : ''}` : 'No documents yet' });
+      update({ mode, prog: readyDocs.length ? `Based on ${readyDocs.length} document${readyDocs.length > 1 ? 's' : ''}` : 'No documents added yet' });
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let text = '';
@@ -81,7 +78,7 @@ export default function Page() {
 
   function summaryText() {
     return [
-      'Summary for an expert (concept, sample data)',
+      'Summary for your tax expert',
       'Documents: ' + (docKeys.length ? docKeys.map((k) => DOCS[k].name).join(', ') : 'none yet'),
       'Questions: ' + (asked.length ? asked.join(' | ') : 'none yet'),
       'Open items: ' + (items.length ? items.join('; ') : 'none yet'),
@@ -97,13 +94,9 @@ export default function Page() {
   return (
     <main className="wrap">
       <header>
-        <div className="tags">
-          <span className="tag">Concept</span>
-          <span className="tag">Sample data only</span>
-          <span className="tag">{ENV_LABEL}</span>
-        </div>
+        <div className="brand">Tax Copilot</div>
         <h1>Upload a document, ask questions, hand a clean summary to an expert</h1>
-        <p className="lede">A concept for the AI-native tax direction Intuit has announced, built on Next.js and the Vercel AI SDK. It is not an Intuit product, and every number is made up.</p>
+        <p className="lede">Add your tax documents, ask questions in plain language, and send an expert a summary so they never start from scratch.</p>
       </header>
 
       <div className="grid">
@@ -117,7 +110,7 @@ export default function Page() {
                   <div className="name">{doc.name}</div>
                   <ul className="steps">
                     {doc.steps.slice(0, Math.max(1, d.done + (d.done < doc.steps.length ? 1 : 0))).map((s, i) => (
-                      <li key={s}><span className="mk">{i < d.done ? 'ok' : '...'}</span><span>{s}</span></li>
+                      <li key={s}><span className="mk">{i < d.done ? '✓' : '…'}</span><span>{s}</span></li>
                     ))}
                   </ul>
                   {d.done >= doc.steps.length && (
@@ -129,13 +122,13 @@ export default function Page() {
               );
             })}
             <div className="chips">
-              <button onClick={() => addDoc('w2')} disabled={docKeys.includes('w2')}>Upload sample W-2</button>
-              <button onClick={() => addDoc('nec')} disabled={docKeys.includes('nec')}>Upload sample 1099-NEC</button>
+              <button onClick={() => addDoc('w2')} disabled={docKeys.includes('w2')}>Add a sample W-2</button>
+              <button onClick={() => addDoc('nec')} disabled={docKeys.includes('nec')}>Add a sample 1099-NEC</button>
             </div>
           </section>
 
           <section className="panel sum" aria-label="Summary for an expert">
-            <div className="row"><h2>Summary for an expert</h2><span className="label">Built as you go</span></div>
+            <div className="row"><h2>Summary for your tax expert</h2></div>
             <h3>Documents received</h3>
             {docKeys.length ? <ul>{docKeys.map((k) => <li key={k}>{DOCS[k].name}</li>)}</ul> : <div className="none">None yet</div>}
             <h3>Questions asked</h3>
@@ -147,12 +140,12 @@ export default function Page() {
         </div>
 
         <section className="panel" aria-label="Copilot">
-          <div className="row"><h2>Copilot</h2><span className="label">Answers stream in</span></div>
+          <div className="row"><h2>Copilot</h2></div>
           <div className="chat" ref={chatRef} aria-live="polite">
             {messages.map((m, i) => (
               <div key={i} className={`msg ${m.role}`}>
                 {m.role === 'ai' && m.prog && (
-                  <span className="prog">{m.prog}{m.mode === 'live' ? ' · live AI via AI Gateway' : m.mode === 'simulated' ? ' · simulated answer' : ''}</span>
+                  <span className="prog">{m.prog}</span>
                 )}
                 {m.text}
                 {m.streaming && <span className="caret" />}
@@ -163,21 +156,12 @@ export default function Page() {
             {SUGGESTED.map((q) => <button key={q} onClick={() => ask(q)} disabled={busy}>{q}</button>)}
           </div>
           <form className="ask" onSubmit={(e) => { e.preventDefault(); ask(input); }}>
-            <input value={input} onChange={(e) => setInput(e.target.value)} maxLength={300} placeholder="Ask about the sample return" aria-label="Your question" />
+            <input value={input} onChange={(e) => setInput(e.target.value)} maxLength={300} placeholder="Ask about your return" aria-label="Your question" />
             <button className="primary" type="submit" disabled={busy || !input.trim()}>Ask</button>
           </form>
         </section>
       </div>
 
-      <section aria-label="What this shows">
-        <div className="label" style={{ marginBottom: 8 }}>What this shows about Vercel (proposed for Intuit)</div>
-        <div className="shows">
-          <div className="panel"><b>v0</b><p>Screens like these can start as v0 prototypes, so teams try a working version before writing production code.</p></div>
-          <div className="panel"><b>Deployment platform</b><p>This page shipped as a preview link for review, then was promoted to production. Every change gets its own link, with rollback if needed.</p></div>
-          <div className="panel"><b>AI SDK and AI Gateway</b><p>Answers stream word by word from a model routed through AI Gateway. If the model is unavailable, a sample answer streams instead.</p></div>
-        </div>
-      </section>
-      <footer>Concept for discussion. Not affiliated with or endorsed by Intuit. Do not enter real personal or tax information.</footer>
     </main>
   );
 }

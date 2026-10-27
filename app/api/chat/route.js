@@ -37,14 +37,14 @@ export async function POST(req) {
   const result = streamText({
     model: MODEL,
     instructions:
-      'You are a tax copilot in a product concept demo. The documents below are fictional samples. ' +
-      'Answer in plain, friendly language in under 110 words, using only the sample fields provided. ' +
+      'You are a tax copilot. The documents below are samples. ' +
+      'Answer in plain, friendly language in under 110 words, using only the document fields provided. ' +
       'Do not give definitive tax advice. For anything complex, suggest that an expert review it. ' +
       'Never ask for real personal information. If the question is not about taxes or these documents, ' +
-      'say you can only help with the sample return. No markdown headings.\n\nSample documents:\n' + context,
+      'say you can only help with questions about their return. No markdown headings.\n\nSample documents:\n' + context,
     prompt: question,
     maxOutputTokens: 350,
-    onError: () => { failed = true; },
+    onError: ({ error }) => { failed = true; console.error('ai-gateway-error', error?.message || error); },
   });
 
   const it = result.textStream[Symbol.asyncIterator]();
@@ -54,8 +54,9 @@ export async function POST(req) {
       it.next(),
       new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 12000)),
     ]);
-  } catch {
+  } catch (e) {
     failed = true;
+    console.error('ai-first-chunk-error', e?.message || e);
   }
   if (failed || !first || first.done || !first.value) {
     return textResponse(fallbackAnswer(question, docKeys), 'simulated');
