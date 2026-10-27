@@ -1,0 +1,16 @@
+{
+  "name": "tax-copilot-concept",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "ai": "7.0.154",
+    "geist": "1.8.2",
+    "next": "16.4.3",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  }
+}
